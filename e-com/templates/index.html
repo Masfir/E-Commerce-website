@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Home page {% endblock title %}
+
+{% block stylecss %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" 
+crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{% endblock stylecss %}
+
+{% block content %} 
+
+<h1>Welcome to our shop</h1>
+<h1 class="text-danger text-center">{{user.username}}</h1>
+
+{% if messages %}
+{% for message in messages %}
+
+<div {% if message.tags %} class="alert alert-{{message.tags}} alert-dismissible fade show" {% endif %} role="alert">
+  <strong>{{message}}</strong>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>        
+</div>
+
+{% endfor %}
+{% endif %}
+
+{% endblock content %}
+
+{% block body %} 
+
+        <!-- ======= Portfolio Section ======= -->
+        <section id="portfolio" class="portfolio">
+          <div class="container">
+      
+                <div class="section-title">
+                  <h2>Welcome To Our Shop</h2>
+                  <h3>Check our <span>Product</span></h3>
+                </div>   
+
+                <div class="row">
+                  
+                  <nav class="navbar navbar-light bg-light">
+                    <form class="form-inline" action="{% url 'product_search' %}" method="get">
+                      {% csrf_token %}
+                      <input type="search" class="form-control" name="search_item" id="q" placeholder="Search product ..." required>
+                      <button class="btn btn-outline-success mt-2 mb-4 " type="submit">Search</button>
+                    </form>
+                    
+                    <div class="mb-5">
+                      <form action="{% url 'product_price_search' %}" method="get"> 
+                        <input type="text" name="min_price" maxlength="50" placeholder="min_price" size="8"><strong><span class="text-danger"> To </span></strong>
+                        <input type="text" name="max_price" maxlength="50" placeholder="max_price" size="8">
+                        <button class="btn btn-outline-danger" type="submit" value="Check" > Check </button>
+                      </form> 
+                      <span class="text-danger">If you need put the price range here!</span>  
+                    </div>
+                  </nav>
+                  
+                </div>
+
+                <div class="products">
+                  <div class="row justify-content-center">
+                      {% if product_view %}
+                      {% for product in product_view %}                  
+                      <div class="col-6 col-md-4 col-lg-3">
+                          <div class="product product-2">
+                              <figure class="product-media">
+                                  <a href="/media/{{product.image}}">
+                                    <img src="{{product.image.url}}" alt="Product image" class="product-image" height="250px" width="200px">                            
+                                  </a>
+                              </figure><!-- End .product-media -->
+
+                              <div class="product-body">
+                                  <div class="product-cat">
+                                      <a href="#">Sale</a>
+                                  </div><!-- End .product-cat -->
+                                  <h3 class="product-title"><a href="#">{{product.product_name}}</a></h3>
+                                  <div class="product-price">                                   
+                                      <span class="new-price">TK.{{product.price}}</span><br>                            
+                                      <span>{{product.desc}}</span>                                  
+                                  </div>
+                                  <a href="{% url 'product_details' product.id %}">
+                                    <button class="btn btn-dark btn-sm cart">View Product Details</button>
+                                  </a> 
+                                
+                              </div><!-- End .product-body -->
+                          </div><!-- End .product -->
+                          <br>
+                      </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
+                      {% endfor %}
+                      {% else %}
+                      <h1 class="text-center">Don't have any product...</h1>
+                      {% endif %}                    
+                  
+
+                  </div><!-- End .row -->
+                </div><!-- End .products -->
+
+                <div class="container"> <!--pagination-->
+                  {% for contact in product_view %}
+                      {# Each "contact" is a Contact model object. #}
+                      {{ contact.full_name|upper }}<br>
+                  {% endfor %}
+
+                  <div class="pagination">
+                      <span class="step-links">
+                          {% if product_view.has_previous %}
+                              <a href="?page=1">&laquo; first</a>
+                              <a href="?page={{ product_view.previous_page_number }}">previous</a>
+                          {% endif %}
+
+                          <span class="current">
+                              Page {{ product_view.number }} of {{ product_view.paginator.num_pages }}.
+                          </span>
+
+                          {% if product_view.has_next %}
+                              <a href="?page={{ product_view.next_page_number }}">next</a>
+                              <a href="?page={{ product_view.paginator.num_pages }}">last &raquo;</a>
+                          {% endif %}
+                      </span>
+                  </div>
+                </div> <!--endpagination-->
+
+      
+          </div>
+        </section><!-- End Portfolio Section -->
+
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+        
+{% endblock body %}
